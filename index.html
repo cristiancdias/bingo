@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="style.css" />
+    <title>Bingo Semana da Familia!</title>
+  </head>
+  <body>
+    <!-- Tela Inicial -->
+    <div id="tela-inicial">
+      <h1>Bingo</h1>
+      <button class="btn" onclick="mostrarCartelas()">Gerar Cartelas</button>
+      <button class="btn" onclick="mostrarJogo()">Iniciar Jogo</button>
+    </div>
+
+    <!-- Tela de Cartelas -->
+    <div id="tela-cartelas" class="hidden">
+      <h2>Gerar Cartelas</h2>
+      <label
+        >Imagem Central:
+        <input type="file" id="imagemCentral" accept="image/*" /></label
+      ><br /><br />
+      <label
+        >Quantidade de Cartelas:
+        <input
+          type="number"
+          id="qtdCartelas"
+          min="1"
+          max="100"
+          value="4" /></label
+      ><br /><br />
+      <button class="btn" onclick="gerarCartelas()">Pré-visualizar</button>
+      <div id="preview"></div>
+      <button class="btn hidden" id="btnPDF" onclick="gerarPDF()">
+        Gerar PDF
+      </button>
+      <br /><br />
+      <button class="btn" onclick="voltar()">Voltar</button>
+    </div>
+
+    <!-- Tela do Jogo -->
+    <div id="tela-jogo" class="hidden">
+      <h2>Jogo de Bingo</h2>
+      <button class="btn" onclick="sortearPedra()">Próxima Pedra</button>
+      <h3 id="pedraAtual">-</h3>
+
+      <div id="tabela-jogo-container"></div>
+
+      <br /><br />
+      <button class="btn" onclick="voltar()">Voltar</button>
+    </div>
+
+    <script src="/script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  </body>
+</html>
