@@ -1,13 +1,91 @@
 const telaInicial = document.getElementById("tela-inicial")
 const telaCartelas = document.getElementById("tela-cartelas")
 const telaJogo = document.getElementById("tela-jogo")
+
 let imagemCentralBase64 = null
 
+/**
+ * Converte um SVG em PNG (base64) para evitar cortes no PDF
+ * @param {File|string} svgTextOrFile - SVG como texto ou arquivo
+ * @param {number} width - Largura desejada em pixels
+ * @param {number} height - Altura desejada em pixels
+ * @param {number} scale - Fator de escala para qualidade
+ * @returns {Promise<string>} DataURL em PNG
+ */
+function svgFileToPngDataUrl(
+  svgTextOrFile,
+  width = 120,
+  height = 120,
+  scale = 2
+) {
+  return new Promise(async (resolve, reject) => {
+    try {
+      let svgText
+      if (typeof svgTextOrFile === "string") {
+        svgText = svgTextOrFile
+      } else {
+        // Ler conteúdo do arquivo SVG
+        svgText = await svgTextOrFile.text()
+      }
+
+      // Converter SVG em Base64
+      const svg64 = btoa(unescape(encodeURIComponent(svgText)))
+      const b64start = "data:image/svg+xml;base64,"
+      const img = new Image()
+
+      img.onload = () => {
+        try {
+          const canvas = document.createElement("canvas")
+          canvas.width = width * scale
+          canvas.height = height * scale
+          const ctx = canvas.getContext("2d")
+
+          // Fundo branco para evitar transparência estranha
+          ctx.fillStyle = "#ffffff"
+          ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+          // Desenhar SVG como imagem no canvas
+          ctx.drawImage(img, 0, 0, canvas.width, canvas.height)
+
+          // Converter para PNG
+          const png = canvas.toDataURL("image/png")
+          resolve(png)
+        } catch (err) {
+          reject(err)
+        }
+      }
+
+      img.onerror = e =>
+        reject(new Error("Falha ao carregar SVG: " + e.message))
+      img.src = b64start + svg64
+    } catch (err) {
+      reject(err)
+    }
+  })
+}
+
+// Evento de upload do arquivo
 document
   .getElementById("imagemCentral")
-  .addEventListener("change", function (event) {
+  .addEventListener("change", async function (event) {
     const file = event.target.files[0]
-    if (file) {
+    if (!file) return
+
+    // Detecta se o arquivo é SVG
+    if (file.type === "image/svg+xml" || file.name.endsWith(".svg")) {
+      try {
+        console.log("Convertendo SVG para PNG...")
+        imagemCentralBase64 = await svgFileToPngDataUrl(file, 120, 120, 2)
+        console.log("Conversão concluída com sucesso!")
+      } catch (err) {
+        console.error("Erro convertendo SVG:", err)
+        // Fallback: tentar ler como dataURL direto
+        const reader = new FileReader()
+        reader.onload = e => (imagemCentralBase64 = e.target.result)
+        reader.readAsDataURL(file)
+      }
+    } else {
+      // Caso seja PNG ou JPG
       const reader = new FileReader()
       reader.onload = function (e) {
         imagemCentralBase64 = e.target.result
@@ -108,11 +186,15 @@ async function gerarPDF() {
   let count = 0
 
   for (let i = 0; i < cartelas.length; i++) {
-    await doc.html(cartelas[i], {
-      x: x,
-      y: y,
-      html2canvas: { scale: 0.3 }
+    const canvas = await html2canvas(cartelas[i], {
+      scale: 2,
+      backgroundColor: null,
+      useCors: true
     })
+    const imgData = canvas.toDataURL("image/png")
+
+    doc.addImage(imgData, "PNG", x, y, 88, 88)
+
     x += 100
     count++
     if (count % 2 === 0) {
