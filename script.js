@@ -1,6 +1,8 @@
 const telaInicial = document.getElementById("tela-inicial")
 const telaCartelas = document.getElementById("tela-cartelas")
 const telaJogo = document.getElementById("tela-jogo")
+const links = document.querySelectorAll(".click-hide")
+const btnRestaurar = document.getElementById("restaurar")
 
 let imagemCentralBase64 = null
 
@@ -110,6 +112,21 @@ function voltar() {
   telaJogo.classList.add("hidden")
   telaInicial.classList.remove("hidden")
 }
+
+// Função para esconder a imagem ao clicar
+links.forEach(link => {
+  link.addEventListener("click", function (event) {
+    event.preventDefault() // Impede que o link recarregue a página
+    const img = link.querySelector("img")
+    img.classList.add("hidden")
+  })
+})
+
+// Função para restaurar todas as imagens
+btnRestaurar.addEventListener("click", function () {
+  const imagens = document.querySelectorAll(".click-hide img")
+  imagens.forEach(img => img.classList.remove("hidden"))
+})
 
 //Geração de Cartelas
 function gerarCartelas() {

@@ -73,3 +73,10 @@ td {
 .espaco-coluna {
   border: 3px solid;
 }
+
+img {
+  width: 300px;
+  margin: 10px;
+  cursor: pointer;
+  transition: opacity 0.5s ease, visibility 0.5s ease;
+}
