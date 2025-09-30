@@ -36,6 +36,10 @@ body {
   border-radius: 8px;
 }
 
+#pedraAtual {
+  font-size: 60px;
+}
+
 table {
   border-collapse: collapse;
   margin: auto;
@@ -61,13 +65,23 @@ td {
 }
 
 .sorteado {
-  background-color: #2ecc71;
+  background-color: #c42f15ff;
   color: white;
 }
 
 #tabela-jogo-container {
   margin-top: 20px;
   overflow-x: auto;
+}
+
+#tabela-jogo-container th {
+  font-size: 32px;
+}
+
+#tabela-jogo-container td {
+  width: 60px;
+  height: 60px;
+  font-size: 40px;
 }
 
 .espaco-coluna {
